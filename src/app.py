@@ -37,6 +37,40 @@ def add_new_human():
         return humans, 201
 
 
+@app.route('/humans/<int:human_id>', methods=['PUT', 'DELETE'])#actualizar
+def update_human(human_id=None):
+    if request.method == 'PUT':
+        body = request.json
+        new_human = list(filter(lambda item: item["id"] == human_id, humans))
+        if len(new_human) <=0:
+            return jsonify({"message":"error not found"}), 404
+        else:
+            new_human = new_human[0]
+            new_human["name"] = body["name"]
+            new_human["lastname"] = body.get("lastname")
+
+            print(new_human)
+            return jsonify(new_human), 200
+        
+        print(body, human_id)
+        return jsonify([]), 200
+
+
+    if request.method == 'DELETE':
+        if human_id is not None:
+            for item in humans:
+                if item["id"] == human_id:
+                    humans.remove(item)
+                    return jsonify([]), 204
+
+            return jsonify({"message":"error not found"}), 404
+        return jsonify({"message":"error not found"}), 404
+    return jsonify([]), 405
+
+
+
 if __name__=="__main__":
     app.run(host='0.0.0.0', port="8000", debug=True)
 # app.run(host="0.0.0.0", debug=True)
+
+
